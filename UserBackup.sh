@@ -5,6 +5,8 @@
 # Uses rsync to create an archive of a users
 # home folder to switch to a new computer
 #
+# Added using Atom + GitHub
+#
 # Made by Liam Matthews - 14-02-18
 ###############################################
 # Determining location to store backup data
