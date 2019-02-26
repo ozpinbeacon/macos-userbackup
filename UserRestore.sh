@@ -67,12 +67,12 @@ read accountCreation
 ###############################################
 # Creating a mobile account for the user
 
-if [ $accountCreation == "y"] -o [ $accountCreation == "Y" ]
+if [ $accountCreation == "y" ] || [ $accountCreation == "Y" ]
 then
   sleep 2s
   sudo /System/Library/CoreServices/ManagedClient.app/Contents/Resources/createmobileaccount -n "${users[$username]}"
   sleep 2s
-elif [ $accountCreation == "n" ] -o [ $accountCreation == "N" ]
+elif [ $accountCreation == "n" ] || [ $accountCreation == "N" ]
 then
   echo Account not created
 else
@@ -89,7 +89,7 @@ read -n 1 -s -r -p "Press any key to continue"
 ###############################################
 # Restoring the data
 
-if [ $choice == "1" ]
+if [ $backupType == "1" ]
 then
     sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Desktop /Users/"${users[$username]}"/
     sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Documents /Users/"${users[$username]}"/
@@ -97,7 +97,7 @@ then
     sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Movies /Users/"${users[$username]}"/
     sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Pictures /Users/"${users[$username]}"/
     sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Music /Users/"${users[$username]}"/
-elif [ $choice == "2" ]
+elif [ $backupType == "2" ]
 then
     sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}" /Users/
 else
