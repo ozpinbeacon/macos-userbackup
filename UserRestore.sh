@@ -85,34 +85,21 @@ fi
 echo I am now going to restore "${users[$username]}"
 
 read -n 1 -s -r -p "Press any key to continue"
+echo ""
 
 ###############################################
 # Restoring the data
 
 if [ $backupType == "1" ]
 then
-    sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Desktop /Users/"${users[$username]}"/
-    sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Documents /Users/"${users[$username]}"/
-    sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Downloads /Users/"${users[$username]}"/
-    sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Movies /Users/"${users[$username]}"/
-    sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Pictures /Users/"${users[$username]}"/
-    sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Music /Users/"${users[$username]}"/
-elif [ $backupType == "2" ]
-then
-    sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}" /Users/
-else
-    echo "Choice not recgonized, please run script again."
-    exit 1
-fi
-
-if [ $backupType == "1" ]
-then
-  if [ ! -d /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Library ]
+  if [ ! -d "/Volumes/'${locations[$backup]}'/Users/'${users[$username]}'/Library" ]
   then
-      echo "This backup was made using the full backup option and you have selected to restore using the minimal restore option. This will only copy files and will not copy any preferences or other Library files. Would you like to proceed?"
+      echo ""
+      echo "This backup was made using the full backup option and you have selected to restore using the minimal restore option. This will only copy files and will not copy any preferences or other Library files."
+      echo "Would you like to proceed?"
       echo Y/N?
       read minimalUsingFull
-      if [ $minimalUsingFull == "y" ] -o [ $minimalUsingFull == "Y" ]
+      if [ $minimalUsingFull == "y" ] || [ $minimalUsingFull == "Y" ]
       then
         sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Desktop /Users/"${users[$username]}"/
         sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Documents /Users/"${users[$username]}"/
@@ -120,7 +107,7 @@ then
         sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Movies /Users/"${users[$username]}"/
         sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Pictures /Users/"${users[$username]}"/
         sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Music /Users/"${users[$username]}"/
-      elif [ $minimalUsingFull == "n" ] -o [ $minimalUsingFull == "N" ]
+      elif [ $minimalUsingFull == "n" ] || [ $minimalUsingFull == "N" ]
       then
         echo "Backup was not completed. Please run script again."
         exit 0
@@ -138,11 +125,12 @@ then
   fi
 elif [ $backupType == "2" ]
 then
-  if [ ! -d /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Library ]
+  if [ ! -d "/Volumes/'${locations[$backup]}'/Users/'${users[$username]}'/Library" ]
   then
       echo "This option requires the use of the backup profile, please ensure this is installed."
       read -n 1 -s -r -p "Press any key to continue"
-      sudo rync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}" /Users/
+      echo ""
+      sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}" /Users/
   else
       echo "This user was backed up using the minimal option and thus cannot be restored using the full option. Please re run the script and select minimal"
       exit 1
