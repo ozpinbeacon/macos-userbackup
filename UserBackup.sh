@@ -38,6 +38,14 @@ then
 fi
 
 ###############################################
+# Determining type of backup
+
+echo Would you like to do a minimal backup or a full backup?
+echo 1. Minimal Backup
+echo 2. Full Backup
+read backupType
+
+###############################################
 # Determining Users to Backup
 
 echo "Pick a user to backup"
@@ -67,6 +75,26 @@ read -n 1 -s -r -p "Press any key to continue"
 ##############################################
 # Backing up of data to respective areas. Copying extensive attributes with data so as to avoid any '~$' documents
 
-sudo rsync -aEh --progress /Users/${users[$username]} /Volumes/${locations[$backup]}/Users/
+if [ $backupType == "1" ]
+then
+    echo "Performing minimal backup"
+    echo ""
+    sudo rsync -aEh --progress /Users/${users[$username]}/Desktop /Volumes/${locations[$backup]}/Users/${users[$username]}/
+    sudo rsync -aEh --progress /Users/${users[$username]}/Documents /Volumes/${locations[$backup]}/Users/${users[$username]}/
+    sudo rsync -aEh --progress /Users/${users[$username]}/Downloads /Volumes/${locations[$backup]}/Users/${users[$username]}/
+    sudo rsync -aEh --progress /Users/${users[$username]}/Pictures /Volumes/${locations[$backup]}/Users/${users[$username]}/
+    sudo rsync -aEh --progress /Users/${users[$username]}/Music /Volumes/${locations[$backup]}/Users/${users[$username]}/
+    sudo rsync -aEh --progress /Users/${users[$username]}/Movies /Volumes/${locations[$backup]}/Users/${users[$username]}/
+elif [ $backupType == "2" ]
+then
+    echo "Performing full backup"
+    echo ""
+    sudo rsync -aEh --progress /Users/${users[$username]} /Volumes/$locations[$backup]}/Users/
+else
+    echo "Choice not recognized. Please run script again"
+    exit 1
+fi
+
+echo "Backup completed"
 
 echo "All done!"
