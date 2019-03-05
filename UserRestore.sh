@@ -10,7 +10,7 @@
 ###############################################
 # Determining location to retrieve backup data
 
-echo Pick a backup location
+echo Pick location of backup data
 
 cd /
 cd Volumes
@@ -27,7 +27,7 @@ do
 echo "$i - ${locations[$i]}"
 done
 
-echo "Please type the location name below"
+echo "Select location number"
 read backup
 
 ###############################################
@@ -55,9 +55,9 @@ done
 echo Please type the name of the user you wish to restore.
 read username
 
-echo Would you like to do a minimal backup or a full backup?
-echo 1. Minimal Backup
-echo 2. Full Backup
+echo Would you like to do a minimal restoration or a full restoration?
+echo 1. Minimal Restore
+echo 2. Full Restore
 read backupType
 
 echo Create mobile account now?
