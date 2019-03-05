@@ -1,6 +1,5 @@
-# macos-userbackup
-macOS backup and restore scripts
+# macOS-userbackup
 
-Creates a backup of a users home folder and restores it.
+Backup of user data through rsync.
 
-Uses a TCC configuration profile to allow Terminal to access
+To use, run the UserExecute.sh script and follow the prompts
