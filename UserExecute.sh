@@ -214,7 +214,6 @@ then
 	then
 	  if [ ! -d "/Volumes/'${locations[$backup]}'/Users/'${users[$username]}'/Library" ]
 	  then
-	      echo "This option requires the use of the backup profile, please ensure this is installed."
 	      read -n 1 -s -r -p "Press any key to continue"
 	      echo ""
 	      sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}" /Users/
