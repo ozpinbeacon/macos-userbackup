@@ -117,15 +117,49 @@ then
 	echo "Select location number"
 	read backup
 
+	################################################
+	# Selecting Time Machine or regular backup
+
+	echo "Is the backup location a Time Machine backup? [Y/N]"
+	read timemachine
+
+	if [[ "$timemachine" =~ ^([yY][eE][sS]|[yY])+$ ]]
+	then
+		cd /
+		cd Volumes
+		cd "${locations[$backup]}"
+		cd Backups.backupdb
+			declare -a backupcomputers
+			indexNumber=1
+			for i in *
+			do
+			backupcomputers[$indexNumber]=$i
+			indexNumber=$((indexNumber+1))
+			done
+			for i in "${!backupcomputers[@]}"
+			do
+			echo "$i - ${backupcomputers[$i]}"
+			done
+			echo "Which computer do you wish to restore"
+			read computerchoice
+		cd "${backupcomputers[$computerchoice]}"
+		cd Latest
+		cd Macintosh\ HD
+		cd Users
+	elif [[ "$timemachine" =~ ^([nN][oO]|[nN])+$ ]]
+	then
+		cd /
+		cd Volumes
+		cd "${locations[$backup]}"
+		cd Users
+	else
+		echo "An error occured. Input was neither Y or N"
+	fi
+
 	###############################################
 	# Determining which user to restore from backup
 
 	echo Pick a user to restore
-
-	cd /
-	cd Volumes
-	cd "${locations[$backup]}"
-	cd Users
 
 	declare -a users
 	indexNumber=1
