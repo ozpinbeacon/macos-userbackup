@@ -222,12 +222,12 @@ then
 	      read minimalUsingFull
 	      if [ $minimalUsingFull == "y" ] || [ $minimalUsingFull == "Y" ]
 	      then
-	        sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Desktop /Users/"${users[$username]}"/
-	        sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Documents /Users/"${users[$username]}"/
-	        sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Downloads /Users/"${users[$username]}"/
-	        sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Movies /Users/"${users[$username]}"/
-	        sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Pictures /Users/"${users[$username]}"/
-	        sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Music /Users/"${users[$username]}"/
+	        sudo rsync -aEh --progress "${users[$username]}"/Desktop /Users/"${users[$username]}"/
+	        sudo rsync -aEh --progress "${users[$username]}"/Documents /Users/"${users[$username]}"/
+	        sudo rsync -aEh --progress "${users[$username]}"/Downloads /Users/"${users[$username]}"/
+	        sudo rsync -aEh --progress "${users[$username]}"/Movies /Users/"${users[$username]}"/
+	        sudo rsync -aEh --progress "${users[$username]}"/Pictures /Users/"${users[$username]}"/
+	        sudo rsync -aEh --progress "${users[$username]}"/Music /Users/"${users[$username]}"/
 	      elif [ $minimalUsingFull == "n" ] || [ $minimalUsingFull == "N" ]
 	      then
 	        echo "Backup was not completed. Please run script again."
@@ -237,20 +237,20 @@ then
 	        exit 1
 	      fi
 	  else
-	    sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Desktop /Users/"${users[$username]}"/
-	    sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Documents /Users/"${users[$username]}"/
-	    sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Downloads /Users/"${users[$username]}"/
-	    sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Movies /Users/"${users[$username]}"/
-	    sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Pictures /Users/"${users[$username]}"/
-	    sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}"/Music /Users/"${users[$username]}"/
+	    sudo rsync -aEh --progress "${users[$username]}"/Desktop /Users/"${users[$username]}"/
+	    sudo rsync -aEh --progress "${users[$username]}"/Documents /Users/"${users[$username]}"/
+	    sudo rsync -aEh --progress "${users[$username]}"/Downloads /Users/"${users[$username]}"/
+	    sudo rsync -aEh --progress "${users[$username]}"/Movies /Users/"${users[$username]}"/
+	    sudo rsync -aEh --progress "${users[$username]}"/Pictures /Users/"${users[$username]}"/
+	    sudo rsync -aEh --progress "${users[$username]}"/Music /Users/"${users[$username]}"/
 	  fi
 	elif [ $backupType == "2" ]
 	then
-	  if [ ! -d "/Volumes/'${locations[$backup]}'/Users/'${users[$username]}'/Library" ]
+	  if [ ! -d "'${users[$username]}'/Library" ]
 	  then
 	      read -n 1 -s -r -p "Press any key to continue"
 	      echo ""
-	      sudo rsync -aEh --progress /Volumes/"${locations[$backup]}"/Users/"${users[$username]}" /Users/
+	      sudo rsync -aEh --progress "${users[$username]}" /Users/
 	  else
 	      echo "This user was backed up using the minimal option and thus cannot be restored using the full option. Please re run the script and select minimal"
 	      exit 1
