@@ -266,6 +266,11 @@ then
 	# Changing of ownership to allow for use
 
 	sudo chown -R "${users[$username]}":admin /Users/"${users[$username]}"
+	if [[ "$timemachine" =~ ^([yY][eE][sS]|[yY])+$ ]]
+	then
+		sudo xattr -rc /Users/"${users[$username]}"
+		sudo chmod -R -N /Users/"${users[$username]}"
+	fi
 
 	###############################################
 	# Removing configuration profile
