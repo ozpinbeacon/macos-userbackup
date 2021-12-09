@@ -36,7 +36,9 @@ def backup(location, type, username):
 		if not re.search(r'[yY]', option):
 			print('INFO: Not overwriting existing user folder, exiting...')
 			exit(1)
-	
+	else:
+		os.rmdir(backupPath)
+
 	if type == "full":
 		subprocess.call(['rsync', '-aeh', '--progress', '/Users/' + username, backupPath])
 	else:
@@ -44,22 +46,35 @@ def backup(location, type, username):
 			subprocess.call(['rsync', '-aeh', '--progress', '/Users/' + username, backupPath + '/' + folder])
 
 def restore(location, type, username):
-	if os.path.exist('/Users/' + username):
-		print("WARNING: User already exists at /Users/" + username)
+	backupPath = location + '/' + username
+	restorePath = '/Users/' + username
+
+	if os.path.exist(restorePath):
+		print("WARNING: User already exists at " + restorePath)
 		print("Are you sure you wish to overwrite the existing folder (y/n)")
 		option = input()
 		if not re.search(r'[yY]', option):
 			print('INFO: Not overwriting existing user folder, exiting...')
 			exit(1)
+	else:
+		os.rmdir(restorePath)
 	
 	if type == "full":
-		subprocess.call(['rsync', '-aeh', '--progress', location, '/Users/' + username])
+		subprocess.call(['rsync', '-aeh', '--progress', backupPath, restorePath])
 	else:
 		for folder in standardCopy:
-			subprocess.call(['rsync', '-aeh', '--progress', location + '/' + folder, '/Users/' + username + '/' + folder])
+			subprocess.call(['rsync', '-aeh', '--progress', backupPath + '/' + folder, restorePath + '/' + folder])
 	
 def main():
 	argumentValidation()
+
+	try:
+		temp = open('/Library/Application Support/com.apple.TCC/tcc.db')
+		temp.close()
+	except:
+		print('Terminal requires full-disk access in order to perform this script')
+		exit(1)
+
 
 	if args.type == None:
 		type = "standard"
