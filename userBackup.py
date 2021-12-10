@@ -1,5 +1,8 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
+from __future__ import print_function
+from builtins import input
+import shutil
 import argparse
 import subprocess
 import pwd
@@ -61,62 +64,74 @@ def environmentValidation():
 
 def backup(location, type, username):
 	userPath = os.path.expanduser('~' + username)
-	backupPath = location + '/' + username
+	backupPath = location + '/'
 
-	if os.path.exists(backupPath):
-		print("WARNING: User already exists at" + backupPath)
+	if os.path.exists(backupPath + username):
+		print("WARNING: User already exists at " + backupPath + username)
 		print("Are you sure you wish to overwrite the existing folder (y/n)")
 		option = input()
-		if not re.search(r'[yY]', option):
-			print('INFO: Not overwriting existing user folder, exiting...')
-			exit(1)
-	else:
-		os.rmdir(backupPath)
-
-	if type == "full":
-		subprocess.call(['rsync', '-aeh', '--progress', userPath, backupPath])
-	else:
-		for folder in standardCopy:
-			subprocess.call(['rsync', '-aeh', '--progress', userPath + '/' + folder, backupPath + '/' + folder])
-	
-	f = open(backupPath + '/' + username + '-path', 'w')
-	f.write(userPath)
-	f.close()
-
-def restore(location, type, username):
-	backupPath = location + '/' + username
-	if os.path.isfile(backupPath + '/' + username + '-path'):
-		f = open(backupPath + '/' + username + '-path', 'r')
-		restorePath = f.read()
-		f.close()
-	else:
-		restorePath = '/Users/' + username
-
-	if os.path.exists(restorePath):
-		print("WARNING: User already exists at " + restorePath)
-		print("Are you sure you wish to overwrite the existing folder (y/n)")
-		option = input()
+		assert isinstance(option, str)
 		if not re.search(r'[yY]', option):
 			print('INFO: Not overwriting existing user folder, exiting...')
 			exit(1)
 		else:
-			os.rmdir(restorePath)
+			shutil.rmtree(backupPath + username, ignore_errors=True)
+
+	if type == "full":
+		subprocess.call(['rsync', '-aeh', '--progress', userPath, backupPath])
+	else:
+		os.mkdir(backupPath + username)
+		for folder in standardCopy:
+			subprocess.call(['rsync', '-aeh', '--progress', userPath + '/' + folder, backupPath + username + '/'])
+	
+	f = open(backupPath + username + '/' + username + '-path', 'w')
+	f.write(userPath)
+	f.close()
+
+def restore(location, type, username):
+	userID = pwd.getpwnam(args.username).pw_uid
+	backupPath = location + '/' + username
+
+	if os.path.isfile(backupPath + '/' + username + '-path'):
+		f = open(backupPath + '/' + username + '-path', 'r')
+		userPath = os.path.dirname(f.read())
+		restorePath = userPath + '/'
+		f.close()
+	else:
+		restorePath = '/Users/'
+
+	if os.path.exists(restorePath + username):
+		print("WARNING: User already exists at " + restorePath + username)
+		print("Are you sure you wish to overwrite the existing folder (y/n)")
+		option = input()
+		assert isinstance(option, str)
+		if not re.search(r'[yY]', option):
+			print('INFO: Not overwriting existing user folder, exiting...')
+			exit(1)
+		else:
+			if type == "full":
+				shutil.rmtree(restorePath + username)
+			else:
+				for folder in standardCopy:
+					shutil.rmtree(restorePath + username + '/' + folder)
 	
 	if type == "full":
 		subprocess.call(['rsync', '-aeh', '--progress', backupPath, restorePath])
 	else:
 		for folder in standardCopy:
-			subprocess.call(['rsync', '-aeh', '--progress', backupPath + '/' + folder, restorePath + '/' + folder])
+			subprocess.call(['rsync', '-aeh', '--progress', backupPath + '/' + folder, restorePath + username + '/'])
+	
+	os.chown(restorePath + username, userID, -1)
 	
 def main():
 	environmentValidation()
 
 	if args.type == None:
-		type = "standard"
+		args.type = "standard"
 	if args.action == "backup":
-		backup(args.location, type, args.username)
+		backup(args.location, args.type, args.username)
 	else:
-		restore(args.location, type, args.username)
+		restore(args.location, args.type, args.username)
 
 if __name__ == "__main__":
 	main()
