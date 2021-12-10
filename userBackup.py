@@ -11,13 +11,32 @@ import os
 import sys
 
 parser = argparse.ArgumentParser(description='Process additional arguments')
-parser.add_argument('-t', '--type')
-parser.add_argument('-a', '--action', required=True)
-parser.add_argument('-l', '--location', required=True)
-parser.add_argument('-u', '--username', required=True)
+parser.add_argument('-t', '--type', help="Type of backup to be performed: full/standard")
+parser.add_argument('-a', '--action', help="Action to be performed: backup/restore", required=True)
+parser.add_argument('-l', '--location', help="Location of backup drive without trailing slash; E.g. /Volumes/BACKUP", required=True)
+parser.add_argument('-u', '--username', help="Username of account to be backed up",required=True)
 args = parser.parse_args()
 
 standardCopy = ['Desktop', 'Documents', 'Downloads', 'Pictures', 'Music', 'Movies']
+
+def prompt():
+	print("What type of backup should be performed? (standard/full)")
+	backupType = input()
+	assert isinstance(backupType, str)
+
+	print("Do you want to backup or restore? (backup/restore)")
+	backupAction = input()
+	assert isinstance(backupAction, str)
+
+	print("Where is your backup drive? E.g. /Volumes/Untitled")
+	backupDrive = input()
+	assert isinstance(backupDrive, str)
+
+	print("Which user would you like to backup?")
+	backupUser = input()
+	assert isinstance(backupUser, str)
+
+	return(backupType, backupAction, backupDrive, backupUser)
 
 def environmentValidation():
 	errorEncountered = False
@@ -78,11 +97,11 @@ def backup(location, type, username):
 			shutil.rmtree(backupPath + username, ignore_errors=True)
 
 	if type == "full":
-		subprocess.call(['rsync', '-aeh', '--progress', userPath, backupPath])
+		subprocess.call(['rsync', '-aEh', '--progress', userPath, backupPath])
 	else:
 		os.mkdir(backupPath + username)
 		for folder in standardCopy:
-			subprocess.call(['rsync', '-aeh', '--progress', userPath + '/' + folder, backupPath + username + '/'])
+			subprocess.call(['rsync', '-aEh', '--progress', userPath + '/' + folder, backupPath + username + '/'])
 	
 	f = open(backupPath + username + '/' + username + '-path', 'w')
 	f.write(userPath)
@@ -116,14 +135,22 @@ def restore(location, type, username):
 					shutil.rmtree(restorePath + username + '/' + folder)
 	
 	if type == "full":
-		subprocess.call(['rsync', '-aeh', '--progress', backupPath, restorePath])
+		subprocess.call(['rsync', '-aEh', '--progress', backupPath, restorePath])
 	else:
 		for folder in standardCopy:
-			subprocess.call(['rsync', '-aeh', '--progress', backupPath + '/' + folder, restorePath + username + '/'])
+			subprocess.call(['rsync', '-aEh', '--progress', backupPath + '/' + folder, restorePath + username + '/'])
 	
 	os.chown(restorePath + username, userID, -1)
 	
 def main():
+	if sys.argv[0] == "":
+		print("No arguments given, using prompt instead")
+		results = prompt()
+		args.type = results[0]
+		args.action = results[1]
+		args.location = results[2]
+		args.username = results[3]
+
 	environmentValidation()
 
 	if args.type == None:
