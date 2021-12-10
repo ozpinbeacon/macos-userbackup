@@ -12,9 +12,9 @@ import sys
 
 parser = argparse.ArgumentParser(description='Process additional arguments')
 parser.add_argument('-t', '--type', help="Type of backup to be performed: full/standard")
-parser.add_argument('-a', '--action', help="Action to be performed: backup/restore", required=True)
-parser.add_argument('-l', '--location', help="Location of backup drive without trailing slash; E.g. /Volumes/BACKUP", required=True)
-parser.add_argument('-u', '--username', help="Username of account to be backed up",required=True)
+parser.add_argument('-a', '--action', help="Action to be performed: backup/restore")
+parser.add_argument('-l', '--location', help="Location of backup drive without trailing slash; E.g. /Volumes/BACKUP")
+parser.add_argument('-u', '--username', help="Username of account to be backed up")
 args = parser.parse_args()
 
 standardCopy = ['Desktop', 'Documents', 'Downloads', 'Pictures', 'Music', 'Movies']
@@ -43,28 +43,24 @@ def environmentValidation():
 
 	if args.type != 'standard' and args.type != 'full' and args.type != None:
 		print('ERROR: Type of backup not recognized', file=sys.stderr)
-		print('Please use either "standard" or "full" with "-t/--type"\n', file=sys.stderr)
-		parser.print_help(sys.stderr)
+		print('Please use either "standard" or "full" with "-t/--type"', file=sys.stderr)
 		errorEncountered = True
 
 	if args.action != 'backup' and args.action != 'restore' and args.action != 'direct':
 		print('ERROR: Backup/restore action not recognized', file=sys.stderr)
-		print('Please use with "backup", "restore" or "direct" with "-a/--action"\n', file=sys.stderr)
-		parser.print_help(sys.stderr)
+		print('Please use with "backup", "restore" or "direct" with "-a/--action"', file=sys.stderr)
 		errorEncountered = True
 
 	if not os.path.exists(args.location):
 		print("ERROR: Given '--location' does not exist", file=sys.stderr)
-		print("Please check the backup drive/location and run again\n", file=sys.stderr)
-		parser.print_help(sys.stderr)
+		print("Please check the backup drive/location and run again", file=sys.stderr)
 		errorEncountered = True
 	
 	if args.action == 'backup' or args.action == 'direct':
 		try:
 			pwd.getpwnam(args.username)
 		except KeyError:
-			print("ERROR: User given is not recognized, please check the username and try again\n", file=sys.stderr)
-			parser.print_help(sys.stderr)
+			print("ERROR: User given is not recognized, please check the username and try again", file=sys.stderr)
 			errorEncountered = True
 
 	if not os.geteuid() == 0:
@@ -79,6 +75,7 @@ def environmentValidation():
 		errorEncountered = True
 		
 	if errorEncountered:
+		parser.print_help(sys.stderr)
 		exit(1)
 
 def backup(location, type, username):
@@ -143,7 +140,7 @@ def restore(location, type, username):
 	os.chown(restorePath + username, userID, -1)
 	
 def main():
-	if sys.argv[0] == "":
+	if not len(sys.argv) > 1:
 		print("No arguments given, using prompt instead")
 		results = prompt()
 		args.type = results[0]
